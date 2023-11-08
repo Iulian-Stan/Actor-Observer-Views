@@ -5,7 +5,7 @@ namespace Example.Common
     /// <summary>
     /// Vertex Attribute information <see href="https://www.khronos.org/opengl/wiki/Vertex_Specification#Vertex_buffer_offset_and_stride">vertex buffer attributes</see>
     /// </summary>
-    public struct VertexAttribute
+    public struct VertexAttributeStruct
     {
         public readonly int Size;
         public readonly VertexAttribPointerType Type;
@@ -13,7 +13,7 @@ namespace Example.Common
         public readonly int Stride;
         public readonly int Offset;
 
-        public VertexAttribute(int size, VertexAttribPointerType type, bool normalized, int stride, int offset)
+        public VertexAttributeStruct(int size, VertexAttribPointerType type, bool normalized, int stride, int offset)
         {
             Size = size;
             Type = type;

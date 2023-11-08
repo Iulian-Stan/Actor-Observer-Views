@@ -1,11 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Example.Common;
+using OpenTK.Graphics.OpenGL4;
 
-namespace Example.Common
+namespace ActorObserverViews.GlWrappers
 {
     /// <summary>
     /// Vertex Array Object wrapper <see href="https://www.khronos.org/opengl/wiki/Vertex_Specification#Vertex_Array_Object">VAO</see>
     /// </summary>
-    public class VertexArray
+    public class GlVertexArray
     {
         /// <summary>
         /// Hnadle of the generated buffer object
@@ -27,7 +28,7 @@ namespace Example.Common
         /// </summary>
         /// <param name="primitiveType"></param>
         /// <param name="drawElements"></param>
-        public VertexArray(PrimitiveType primitiveType = PrimitiveType.Triangles, DrawElementsType drawElements = DrawElementsType.UnsignedInt)
+        public GlVertexArray(PrimitiveType primitiveType = PrimitiveType.Triangles, DrawElementsType drawElements = DrawElementsType.UnsignedInt)
         {
             _handle = GL.GenVertexArray();
             PrimitiveType = primitiveType;
@@ -42,15 +43,25 @@ namespace Example.Common
         /// </remarks>
         /// <param name="buffer">Vertex buffer object</param>
         /// <param name="attributes">Vertex attributes (optional)</param>
-        public void BindVertexBuffer(VertexBuffer buffer, params VertexAttribute[] attributes)
+        public void BindBuffer(GlBuffer buffer)
         {
             GL.BindVertexArray(_handle);
             buffer.Bind();
-            for (int i = 0; i < attributes.Length; i++)
-            {
-                GL.VertexAttribPointer(i, attributes[i].Size, attributes[i].Type, attributes[i].Normalized, attributes[i].Stride, attributes[i].Offset);
-                GL.EnableVertexAttribArray(i);
-            }
+        }
+
+        /// <summary>
+        /// Bind vertex array to vertex array object and defines vertex generic attribute data <see href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml">glVertexAttribPointer</see>
+        /// </summary>
+        /// <remarks>
+        /// Attributes should match the same order defined in shader program
+        /// </remarks>
+        /// <param name="buffer">Vertex buffer object</param>
+        /// <param name="attributes">Vertex attributes (optional)</param>
+        public void BindAttribute(int index, VertexAttributeStruct attribute)
+        {
+            GL.BindVertexArray(_handle);
+            GL.EnableVertexAttribArray(index);
+            GL.VertexAttribPointer(index, attribute.Size, attribute.Type, attribute.Normalized, attribute.Stride, attribute.Offset);
         }
 
         /// <summary>

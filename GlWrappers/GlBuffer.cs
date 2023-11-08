@@ -1,11 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace Example.Common
+namespace ActorObserverViews.GlWrappers
 {
     /// <summary>
     /// Vertex Buffer Object wrapper <see href="https://www.khronos.org/opengl/wiki/Vertex_Specification#Vertex_Buffer_Object">VBO</see>
     /// </summary>
-    public class VertexBuffer
+    public class GlBuffer
     {
         /// <summary>
         /// Handle of the buffer object
@@ -24,7 +24,7 @@ namespace Example.Common
         /// Private constructor is used as base for public ones
         /// </remarks>
         /// <param name="target">Target to which the buffer object is bound</param>
-        private VertexBuffer(BufferTarget target)
+        private GlBuffer(BufferTarget target)
         {
             _handle = GL.GenBuffer();
             _target = target;
@@ -40,7 +40,8 @@ namespace Example.Common
         /// <param name="target">Target to which the buffer object is bound</param>
         /// <param name="data">Data that will be copied into the data store for initialization</param>
         /// <param name="usageHint">Expected usage pattern of the data store</param>
-        public VertexBuffer(BufferTarget target, float[] data, BufferUsageHint usageHint) : this(target)
+        /// 
+        public GlBuffer(BufferTarget target, float[] data, BufferUsageHint usageHint) : this(target)
         {
             GL.BufferData(_target, data.Length * sizeof(float), data, usageHint);
         }
@@ -54,7 +55,7 @@ namespace Example.Common
         /// <param name="target">Target to which the buffer object is bound</param>
         /// <param name="data">Data that will be copied into the data store for initialization</param>
         /// <param name="usageHint">Expected usage pattern of the data store</param>
-        public VertexBuffer(BufferTarget target, int[] data, BufferUsageHint usageHint) : this(target)
+        public GlBuffer(BufferTarget target, int[] data, BufferUsageHint usageHint) : this(target)
         {
             GL.BufferData(_target, data.Length * sizeof(int), data, usageHint);
         }

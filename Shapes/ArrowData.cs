@@ -1,11 +1,11 @@
-﻿using Example.Primitives;
+﻿using ActorObserverViews.Util;
 using System;
 
 namespace Example.Shapes
 {
     public static class ArrowData
     {
-        public static float[] Points(Arrow arrow)
+        public static float[] Points(ArrowStruct arrow)
         {
             // The arrow consists of 2 components: tail (a cylinder) and peak (a cone)
             // Its vertices are defined as follows:
@@ -48,7 +48,7 @@ namespace Example.Shapes
             return vertices;
         }
 
-        public static int[] Triangles(Arrow arrow)
+        public static int[] Triangles(ArrowStruct arrow)
         {
             // Arrow indices are defined as follows
             // 1. tail bottom face (triangles = arrow.sectors)
@@ -58,50 +58,50 @@ namespace Example.Shapes
             // 3. peak curved surface (triangles = arrow.sectors)
             // Note: indeces order considers OpenGL default face culling
             var indices = new int[arrow.Sectors * 6 * 3];
-            var arrowTriangles = TrianglesArray.FromArray(indices);
+            var arrowTriangles = PoligonsArray.FromArray(indices, 3);
             // 1. tail bottom face
             for (int i = 0; i < arrow.Sectors; i++)
             {
-                arrowTriangles[i].P1 = 0;
-                arrowTriangles[i].P2 = (i + 1) % arrow.Sectors + 1;
-                arrowTriangles[i].P3 = i + 1;
+                arrowTriangles[i][0] = 0;
+                arrowTriangles[i][1] = (i + 1) % arrow.Sectors + 1;
+                arrowTriangles[i][2] = i + 1;
             }
             int offset = arrow.Sectors;
             // 2. tail curved surface (rectangular sectors)
             for (int i = 0; i < arrow.Sectors; ++i)
             {
                 // first half of the rectangle (1 point from top + 2 points from bottom)
-                arrowTriangles[offset + 2 * i].P1 = i + arrow.Sectors + 1;
-                arrowTriangles[offset + 2 * i].P2 = i + 1;
-                arrowTriangles[offset + 2 * i].P3 = (i + 1) % arrow.Sectors + 1;
+                arrowTriangles[offset + 2 * i][0] = i + arrow.Sectors + 1;
+                arrowTriangles[offset + 2 * i][1] = i + 1;
+                arrowTriangles[offset + 2 * i][2] = (i + 1) % arrow.Sectors + 1;
                 // second half of the rectangle (1 point from bottom + 2 points from top)
-                arrowTriangles[offset + 2 * i + 1].P1 = (i + 1) % arrow.Sectors + 1;
-                arrowTriangles[offset + 2 * i + 1].P2 = (i + 1) % arrow.Sectors + 1 + arrow.Sectors;
-                arrowTriangles[offset + 2 * i + 1].P3 = i + arrow.Sectors + 1;
+                arrowTriangles[offset + 2 * i + 1][0] = (i + 1) % arrow.Sectors + 1;
+                arrowTriangles[offset + 2 * i + 1][1] = (i + 1) % arrow.Sectors + 1 + arrow.Sectors;
+                arrowTriangles[offset + 2 * i + 1][2] = i + arrow.Sectors + 1;
             }
             offset += 2 * arrow.Sectors;
             // 3. tail top face
             for (int i = 0; i < arrow.Sectors; i++)
             {
-                arrowTriangles[offset + i].P1 = 2 * arrow.Sectors + 1;
-                arrowTriangles[offset + i].P2 = i + 1 + arrow.Sectors;
-                arrowTriangles[offset + i].P3 = (i + 1) % arrow.Sectors + 1 + arrow.Sectors;
+                arrowTriangles[offset + i][0] = 2 * arrow.Sectors + 1;
+                arrowTriangles[offset + i][1] = i + 1 + arrow.Sectors;
+                arrowTriangles[offset + i][2] = (i + 1) % arrow.Sectors + 1 + arrow.Sectors;
             }
             offset += arrow.Sectors;
             // 4. peak base face
             for (int i = 0; i < arrow.Sectors; i++)
             {
-                arrowTriangles[offset + i].P1 = 2 * arrow.Sectors + 1;
-                arrowTriangles[offset + i].P2 = (i + 1) % arrow.Sectors + 1 + 2 * arrow.Sectors + 1;
-                arrowTriangles[offset + i].P3 = i + 1 + 2 * arrow.Sectors + 1;
+                arrowTriangles[offset + i][0] = 2 * arrow.Sectors + 1;
+                arrowTriangles[offset + i][1] = (i + 1) % arrow.Sectors + 1 + 2 * arrow.Sectors + 1;
+                arrowTriangles[offset + i][2] = i + 1 + 2 * arrow.Sectors + 1;
             }
             offset += arrow.Sectors;
             // 5. peak curved surface
             for (int i = 0; i < arrow.Sectors; i++)
             {
-                arrowTriangles[offset + i].P1 = 3 * arrow.Sectors + 2;
-                arrowTriangles[offset + i].P2 = i + 1 + 2 * arrow.Sectors + 1;
-                arrowTriangles[offset + i].P3 = (i + 1) % arrow.Sectors + 1 + 2 * arrow.Sectors + 1;
+                arrowTriangles[offset + i][0] = 3 * arrow.Sectors + 2;
+                arrowTriangles[offset + i][1] = i + 1 + 2 * arrow.Sectors + 1;
+                arrowTriangles[offset + i][2] = (i + 1) % arrow.Sectors + 1 + 2 * arrow.Sectors + 1;
             }
 
             return indices;

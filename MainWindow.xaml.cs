@@ -1,5 +1,6 @@
-﻿using Example.Common;
-using Example.Primitives;
+﻿using ActorObserverViews.GlWrappers;
+using ActorObserverViews.Util;
+using Example.Common;
 using Example.Shapes;
 using Example.Util;
 using OpenTK.Graphics.OpenGL4;
@@ -34,62 +35,66 @@ namespace Example
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             // Initialize Shaders
-            var shaderColor = new Shader("Resources/shaders/shader_col.vert", "Resources/shaders/shader_col.frag");
-            var shaderTexture = new Shader("Resources/shaders/shader_tex.vert", "Resources/shaders/shader_tex.frag");
+            var shaderColor = new GlShader("Resources/shaders/shader_col.vert", "Resources/shaders/shader_col.frag");
+            var shaderTexture = new GlShader("Resources/shaders/shader_tex.vert", "Resources/shaders/shader_tex.frag");
 
             // Initialize Textures
-            var cubeTexture = new Texture("Resources/textures/cube.png", TextureUnit.Texture0);
+            var cubeTexture = new GlTexture("Resources/textures/cube.png", TextureUnit.Texture0);
 
             // Create vertex and indices buffers for arrows
-            var arrow = new Arrow(0.7f, 0.1f, 0.3f, 0.2f, 10);
+            var arrow = new ArrowStruct(0.7f, 0.1f, 0.3f, 0.2f, 10);
             var xArrowPoints = ArrowData.Points(arrow);
             var yArrowPoints = ArrowData.Points(arrow);
             PointsArray.FromArray(yArrowPoints).Rotate(Matrix3.CreateRotationY(MathHelper.DegreesToRadians(-90)));
             var zArrowPoints = ArrowData.Points(arrow);
             PointsArray.FromArray(zArrowPoints).Rotate(Matrix3.CreateRotationZ(MathHelper.DegreesToRadians(90)));
-            var vertexAttribute = new VertexAttribute(3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            var xVertexBuffer = new VertexBuffer(BufferTarget.ArrayBuffer, xArrowPoints, BufferUsageHint.StaticDraw);
-            var yVertexBuffer = new VertexBuffer(BufferTarget.ArrayBuffer, yArrowPoints, BufferUsageHint.StaticDraw);
-            var zVertexBuffer = new VertexBuffer(BufferTarget.ArrayBuffer, zArrowPoints, BufferUsageHint.StaticDraw);
+            var vertexAttribute = new VertexAttributeStruct(3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            var xVertexBuffer = new GlBuffer(BufferTarget.ArrayBuffer, xArrowPoints, BufferUsageHint.StaticDraw);
+            var yVertexBuffer = new GlBuffer(BufferTarget.ArrayBuffer, yArrowPoints, BufferUsageHint.StaticDraw);
+            var zVertexBuffer = new GlBuffer(BufferTarget.ArrayBuffer, zArrowPoints, BufferUsageHint.StaticDraw);
             var arrowTriangles = ArrowData.Triangles(arrow);
-            var elementBuffer = new VertexBuffer(BufferTarget.ElementArrayBuffer, arrowTriangles, BufferUsageHint.StaticDraw);
+            var elementBuffer = new GlBuffer(BufferTarget.ElementArrayBuffer, arrowTriangles, BufferUsageHint.StaticDraw);
 
             // Create X arrow node (used in axes scenes)
-            var xArrowVertexArray = new VertexArray();
-            xArrowVertexArray.BindVertexBuffer(xVertexBuffer, vertexAttribute);
-            xArrowVertexArray.BindVertexBuffer(elementBuffer);
+            var xArrowVertexArray = new GlVertexArray();
+            xArrowVertexArray.BindBuffer(xVertexBuffer);
+            xArrowVertexArray.BindBuffer(elementBuffer);
+            xArrowVertexArray.BindAttribute(0, vertexAttribute);
             var xArrowNode = new Node(xArrowVertexArray, shaderColor);
-            xArrowNode.AddUniform(new ShaderUniformV3("fragColor", Vector3.UnitX));
+            xArrowNode.AddUniform("fragColor", new ShaderUniformV3(Vector3.UnitX));
 
             // Create Y arrow node (used in axes scenes)
-            var yArrowVertexArray = new VertexArray();
-            yArrowVertexArray.BindVertexBuffer(yVertexBuffer, vertexAttribute);
-            yArrowVertexArray.BindVertexBuffer(elementBuffer);
+            var yArrowVertexArray = new GlVertexArray();
+            yArrowVertexArray.BindBuffer(yVertexBuffer);
+            yArrowVertexArray.BindBuffer(elementBuffer);
+            yArrowVertexArray.BindAttribute(0, vertexAttribute);
             var yArrowNode = new Node(yArrowVertexArray, shaderColor);
-            yArrowNode.AddUniform(new ShaderUniformV3("fragColor", Vector3.UnitY));
+            yArrowNode.AddUniform("fragColor", new ShaderUniformV3(Vector3.UnitY));
 
             // Create Z arrow node (used in axes scenes)
-            var zArrowVertexArray = new VertexArray();
-            zArrowVertexArray.BindVertexBuffer(zVertexBuffer, vertexAttribute);
-            zArrowVertexArray.BindVertexBuffer(elementBuffer);
+            var zArrowVertexArray = new GlVertexArray();
+            zArrowVertexArray.BindBuffer(zVertexBuffer);
+            zArrowVertexArray.BindBuffer(elementBuffer);
+            zArrowVertexArray.BindAttribute(0, vertexAttribute);
             var zArrowNode = new Node(zArrowVertexArray, shaderColor);
-            zArrowNode.AddUniform(new ShaderUniformV3("fragColor", Vector3.UnitZ));
+            zArrowNode.AddUniform("fragColor", new ShaderUniformV3(Vector3.UnitZ));
 
             // Create cube node (used in the main scene)
-            var cubeVertexArray = new VertexArray();
-            cubeVertexArray.BindVertexBuffer(new VertexBuffer(BufferTarget.ArrayBuffer, CubeData.Vertices, BufferUsageHint.StaticDraw),
-                new VertexAttribute(3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0),
-                new VertexAttribute(2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float)));
-            cubeVertexArray.BindVertexBuffer(new VertexBuffer(BufferTarget.ElementArrayBuffer, CubeData.Indices, BufferUsageHint.StaticDraw));
+            var cubeVertexArray = new GlVertexArray();
+            cubeVertexArray.BindBuffer(new GlBuffer(BufferTarget.ArrayBuffer, CubeData.Vertices, BufferUsageHint.StaticDraw));
+            cubeVertexArray.BindBuffer(new GlBuffer(BufferTarget.ElementArrayBuffer, CubeData.Indices, BufferUsageHint.StaticDraw));
+            cubeVertexArray.BindAttribute(0, new VertexAttributeStruct(3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0));
+            cubeVertexArray.BindAttribute(1, new VertexAttributeStruct(2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float)));
             var cubeNode = new Node(cubeVertexArray, shaderTexture);
-            cubeNode.AddUniform(new ShaderUniformInt("tex", cubeTexture.Index));
+            cubeNode.AddUniform("tex", new ShaderUniformInt(cubeTexture.Index));
 
             // Create camera view (used in observer scene)
-            var frustumVertexArray = new VertexArray();
-            frustumVertexArray.BindVertexBuffer(new VertexBuffer(BufferTarget.ArrayBuffer, CameraFrustum.Vertices, BufferUsageHint.StaticDraw), vertexAttribute);
-            frustumVertexArray.BindVertexBuffer(new VertexBuffer(BufferTarget.ElementArrayBuffer, CameraFrustum.Indices, BufferUsageHint.StaticDraw));
+            var frustumVertexArray = new GlVertexArray();
+            frustumVertexArray.BindBuffer(new GlBuffer(BufferTarget.ArrayBuffer, CameraFrustumData.Vertices, BufferUsageHint.StaticDraw));
+            frustumVertexArray.BindBuffer(new GlBuffer(BufferTarget.ElementArrayBuffer, CameraFrustumData.Indices, BufferUsageHint.StaticDraw));
+            frustumVertexArray.BindAttribute(0, vertexAttribute);
             var frustumNode = new Node(frustumVertexArray, shaderColor);
-            frustumNode.AddUniform(new ShaderUniformV3("fragColor", new Vector3(.8f, .8f, .8f)));
+            frustumNode.AddUniform("fragColor", new ShaderUniformV3(new Vector3(.8f, .8f, .8f)));
 
             // Create actor scene
             var actorCamera = new Camera(Vector3.UnitZ * 3, 0, -MathHelper.PiOver2, MathHelper.PiOver2, 1.0f, 0.01f, 5f);
@@ -157,7 +162,7 @@ namespace Example
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (IsCursorLocked) return;
-            System.Windows.Point center = WindowHelper.GetWindowCenter();
+            Point center = WindowHelper.GetWindowCenter();
             Mouse.OverrideCursor = Cursors.None;
             WindowHelper.SetCursorPos((int)center.X, (int)center.Y);
             IsCursorLocked = true;
@@ -166,8 +171,8 @@ namespace Example
         private void Window_MouseMove(object sender, MouseEventArgs args)
         {
             if (!IsCursorLocked) return;
-            System.Windows.Point position = PointToScreen(Mouse.GetPosition(this));
-            System.Windows.Point center = WindowHelper.GetWindowCenter();
+            Point position = PointToScreen(Mouse.GetPosition(this));
+            Point center = WindowHelper.GetWindowCenter();
             float deltaX = (float)(position.X - center.X);
             float deltaY = (float)(position.Y - center.Y);
             ActiveCamera.ChangeDirection(deltaX, deltaY);

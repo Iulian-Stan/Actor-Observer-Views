@@ -2,15 +2,15 @@
 using StbImageSharp;
 using System.IO;
 
-namespace Example.Common
+namespace ActorObserverViews.GlWrappers
 {
     // A helper class, much like Shader, meant to simplify loading textures.
-    public class Texture
+    public class GlTexture
     {
         private readonly int _handle;
         private TextureUnit _unit;
 
-        public Texture(string path, TextureUnit unit)
+        public GlTexture(string path, TextureUnit unit)
         {
             // Generate handle
             _handle = GL.GenTexture();

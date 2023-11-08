@@ -1,12 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Example.Common
+namespace ActorObserverViews.GlWrappers
 {
-    public class Shader
+    public class GlShader
     {
         /// <summary>
         /// Handle of the shader program object
@@ -14,16 +13,16 @@ namespace Example.Common
         private readonly int _handle;
 
         /// <summary>
-        /// Dictionary of unniform locations defined in shader program
+        /// Dictionary of uniform locations defined in shader program
         /// </summary>
-        private readonly Dictionary<string, int> _uniformLocations;
+        public readonly Dictionary<string, int> UniformLocations;
 
         /// <summary>
         /// Create and compile fragment and vertex shader programs
         /// </summary>
         /// <param name="vertPath">Path to the vertex shader file</param>
         /// <param name="fragPath">Path to the fragment shader file</param>
-        public Shader(string vertPath, string fragPath)
+        public GlShader(string vertPath, string fragPath)
         {
             // Create and compile verteg shader
             var vertexShader = CreateShader(ShaderType.VertexShader, vertPath);
@@ -59,7 +58,7 @@ namespace Example.Common
             GL.GetProgram(_handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
 
             // Next, allocate the dictionary to hold the locations.
-            _uniformLocations = new Dictionary<string, int>();
+            UniformLocations = new Dictionary<string, int>();
 
             // Loop over all the uniforms,
             for (var i = 0; i < numberOfUniforms; i++)
@@ -71,7 +70,7 @@ namespace Example.Common
                 var location = GL.GetUniformLocation(_handle, key);
 
                 // and then add it to the dictionary.
-                _uniformLocations.Add(key, location);
+                UniformLocations.Add(key, location);
             }
         }
 
@@ -138,61 +137,6 @@ namespace Example.Common
         public void Use()
         {
             GL.UseProgram(_handle);
-        }
-
-        /// <summary>
-        /// Return the location of an attribute variable
-        /// </summary>
-        /// <param name="attribName">Attribute variable name</param>
-        /// <returns></returns>
-        public int GetAttribLocation(string attribName)
-        {
-            return GL.GetAttribLocation(_handle, attribName);
-        }
-
-        /// <summary>
-        /// Set a uniform int on this shader.
-        /// </summary>
-        /// <param name="name">The name of the uniform</param>
-        /// <param name="data">The data to set</param>
-        public void SetInt(string name, int data)
-        {
-            GL.Uniform1(_uniformLocations[name], data);
-        }
-
-        /// <summary>
-        /// Set a uniform float on this shader.
-        /// </summary>
-        /// <param name="name">The name of the uniform</param>
-        /// <param name="data">The data to set</param>
-        public void SetFloat(string name, float data)
-        {
-            GL.Uniform1(_uniformLocations[name], data);
-        }
-
-        /// <summary>
-        /// Set a uniform Vector3 on this shader.
-        /// </summary>
-        /// <param name="name">The name of the uniform</param>
-        /// <param name="data">The data to set</param>
-        public void SetVector3(string name, Vector3 data)
-        {
-            GL.Uniform3(_uniformLocations[name], data);
-        }
-
-        /// <summary>
-        /// Set a uniform Matrix4 on this shader
-        /// </summary>
-        /// <param name="name">The name of the uniform</param>
-        /// <param name="data">The data to set</param>
-        /// <remarks>
-        ///   <para>
-        ///   The matrix is transposed before being sent to the shader.
-        ///   </para>
-        /// </remarks>
-        public void SetMatrix4(string name, Matrix4 data)
-        {
-            GL.UniformMatrix4(_uniformLocations[name], true, ref data);
         }
     }
 }
