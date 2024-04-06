@@ -30,13 +30,13 @@ namespace Example
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
-            //GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            GL.ClearColor(0.6f, 0.6f, 0.6f, 1.0f);
+            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             // Initialize Shaders
-            var shaderColor = new GlShader("Resources/shaders/shader_col.vert", "Resources/shaders/shader_col.frag");
-            var shaderTexture = new GlShader("Resources/shaders/shader_tex.vert", "Resources/shaders/shader_tex.frag");
+            var shaderColor = new GlShader("Resources/shaders/color_shader.vert", "Resources/shaders/color_shader.frag");
+            var shaderTexture = new GlShader("Resources/shaders/texture_shader.vert", "Resources/shaders/texture_shader.frag");
+            var shaderInfPlane = new GlShader("Resources/shaders/inf_plane_shader.vert", "Resources/shaders/inf_plane_shader.frag");
 
             // Initialize Textures
             var cubeTexture = new GlTexture("Resources/textures/cube.png", TextureUnit.Texture0);
@@ -54,6 +54,13 @@ namespace Example
             var zVertexBuffer = new GlBuffer(BufferTarget.ArrayBuffer, zArrowPoints, BufferUsageHint.StaticDraw);
             var arrowTriangles = ArrowData.Triangles(arrow);
             var elementBuffer = new GlBuffer(BufferTarget.ElementArrayBuffer, arrowTriangles, BufferUsageHint.StaticDraw);
+
+            // Carete infinite plane node
+            var planeVertexArray = new GlVertexArray();
+            planeVertexArray.BindBuffer(new GlBuffer(BufferTarget.ArrayBuffer, PlaneData.Vertices, BufferUsageHint.StaticDraw));
+            planeVertexArray.BindBuffer(new GlBuffer(BufferTarget.ElementArrayBuffer, PlaneData.Indices, BufferUsageHint.StaticDraw));
+            planeVertexArray.BindAttribute(0, vertexAttribute);
+            var planeNode = new Node(planeVertexArray, shaderInfPlane);
 
             // Create X arrow node (used in axes scenes)
             var xArrowVertexArray = new GlVertexArray();
@@ -97,8 +104,8 @@ namespace Example
             frustumNode.AddUniform("fragColor", new ShaderUniformV3(new Vector3(.8f, .8f, .8f)));
 
             // Create actor scene
-            var actorCamera = new Camera(Vector3.UnitZ * 3, 0, -MathHelper.PiOver2, MathHelper.PiOver2, 1.0f, 0.01f, 5f);
-            _actorScene = new Scene(actorCamera, cubeNode);
+            var actorCamera = new Camera(Vector3.UnitZ * 3 + Vector3.UnitY, 0, -MathHelper.PiOver2, MathHelper.PiOver2, 1.0f, 0.01f, 5f);
+            _actorScene = new Scene(actorCamera, cubeNode, planeNode);
 
             // Create observer scene
             var observerCamera = new Camera(-Vector3.UnitX * 9, 0, 0, MathHelper.PiOver2, 1.0f, 0.01f, 100f);
@@ -202,7 +209,7 @@ namespace Example
             _actorScene.GetCamera().ChangeAR((float)(e.NewSize.Width / e.NewSize.Height));
         }
 
-        private Matrix4 GetCameraRotation(Camera camera)
+        private static Matrix4 GetCameraRotation(Camera camera)
         {
             return Matrix4.CreateRotationY(MathHelper.PiOver2 + MathHelper.DegreesToRadians(camera.Yaw)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-camera.Pitch));
         }

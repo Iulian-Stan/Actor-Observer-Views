@@ -9,19 +9,19 @@ namespace Example.Common
     {
         private readonly GlVertexArray _vertexArray;
         private readonly GlShader _shader;
-        private readonly Dictionary<string, GlShaderUniform> _uniforms;
-
-        private Matrix4 _model = Matrix4.Identity;
+        private readonly Dictionary<string, IGlShaderUniform> _uniforms;
 
         public Node(GlVertexArray vertexArray, GlShader shader)
         {
             _vertexArray = vertexArray;
             _shader = shader;
-            _uniforms = new Dictionary<string, GlShaderUniform>();
-            _uniforms["model"] = new ShaderUniformM4(Matrix4.Identity);
+            _uniforms = new Dictionary<string, IGlShaderUniform>
+            {
+                ["model"] = new ShaderUniformM4(Matrix4.Identity)
+            };
         }
 
-        public void AddUniform(string key, GlShaderUniform uniform)
+        public void AddUniform(string key, IGlShaderUniform uniform)
         {
             _uniforms[key] = uniform;
         }
@@ -41,8 +41,7 @@ namespace Example.Common
                 _uniforms[entry.Key].SetUniform(entry.Value);
             }
             _vertexArray.Bind();
-            int size;
-            GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out size);
+            GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out int size);
             switch (_vertexArray.DrawElementsType)
             {
                 case DrawElementsType.UnsignedInt: size /= 4; break;

@@ -3,10 +3,11 @@ using System.Windows;
 
 namespace Example.Util
 {
-    public static class WindowHelper
+    public static partial class WindowHelper
     {
-        [DllImport("User32.dll")]
-        public static extern bool SetCursorPos(int X, int Y);
+        [LibraryImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool SetCursorPos(int X, int Y);
 
         public static Point GetWindowCenter()
         {

@@ -6,7 +6,7 @@ namespace ActorObserverViews.GlWrappers
     /// <summary>
     /// Interface used to set uniform on current shader
     /// </summary>
-    public interface GlShaderUniform
+    public interface IGlShaderUniform
     {
         /// <summary>
         /// Set uniform value at specific location
@@ -18,7 +18,7 @@ namespace ActorObserverViews.GlWrappers
     /// <summary>
     /// Interface used to set integer uniform on current shader
     /// </summary>
-    public class ShaderUniformInt : GlShaderUniform
+    public class ShaderUniformInt : IGlShaderUniform
     {
         private int _value;
 
@@ -36,7 +36,7 @@ namespace ActorObserverViews.GlWrappers
     /// <summary>
     /// Interface used to set float uniform on current shader
     /// </summary>
-    public class ShaderUniformFloat : GlShaderUniform
+    public class ShaderUniformFloat : IGlShaderUniform
     {
         private float _value;
 
@@ -54,7 +54,7 @@ namespace ActorObserverViews.GlWrappers
     /// <summary>
     /// Interface used to set vector3 uniform on current shader
     /// </summary>
-    public class ShaderUniformV3 : GlShaderUniform
+    public class ShaderUniformV3 : IGlShaderUniform
     {
         private Vector3 _value;
 
@@ -72,7 +72,7 @@ namespace ActorObserverViews.GlWrappers
     /// <summary>
     /// Interface used to set matrix4 uniform on current shader
     /// </summary>
-    public class ShaderUniformM4 : GlShaderUniform
+    public class ShaderUniformM4 : IGlShaderUniform
     {
         private Matrix4 _value;
 

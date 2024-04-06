@@ -34,8 +34,8 @@ namespace ActorObserverViews.Util
 
         public class Point
         {
-            private float[] _array;
-            private int _index;
+            private readonly float[] _array;
+            private readonly int _index;
 
             public float X
             {

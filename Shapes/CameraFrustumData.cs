@@ -2,7 +2,7 @@
 {
     public class CameraFrustumData
     {
-        public static float[] Vertices =
+        public static readonly float[] Vertices =
         {
         //   X   Y   Z
             -1,  1, -1, // 0 Left-Top-Far
